@@ -6,13 +6,12 @@ This repo implements the Approov API request verification for the [Azure API Man
 
 If you are looking for another Approov integration you can check our list of [quickstarts](https://approov.io/docs/latest/approov-integration-examples/backend-api/), and if you don't find what you are looking for, then please let us know [here](https://approov.io/contact).
 
-> **ALERT:** This is a work in progress at a `dev-*` branch. Please [contact us](https://approov.io/contact) if you need to integrate **now** the Approov solution with your Azure API management platform and we will support you to achieve it as quick as possible.
-
 
 ## TOC - Table of Contents
 
 * [Why?](#why)
 * [How it Works?](#how-it-works)
+* [Quickstart](#approov-integration-quickstart)
 * [Useful Links](#useful-links)
 
 
@@ -44,7 +43,7 @@ In either case, the app, unaware of the token's validity, adds it to every reque
 
 ### Azure API Management Platform
 
-The Azure API management platform ensures that the token supplied in the `Approov-Token` header is present and valid. The validation is done by using a shared secret known only to the Approov cloud service and the API management platform.
+The Azure API management platform ensures that the token supplied in the `Approov-Token` header is present and valid. The validation is done by using a shared secret known only to the Approov cloud service and the Azure API management platform.
 
 The request is handled such that:
 
@@ -54,11 +53,22 @@ The request is handled such that:
 [TOC](#toc---table-of-contents)
 
 
+## Approov Integration Quickstart
+
+The quickstart for the Approov integration with the Azure API management platform gets you up and running with basic Approov token checking:
+
+* [Approov token check quickstart](/docs/APPROOV_TOKEN_QUICKSTART.md)
+
+Bear in mind that the quickstart assumes that you already have an Azure API management platform running, and that your are familiar with managing it.
+
+If you need help to add Approov to the Azure API Management Platform then please contact us [here](https://approov.io/contact).
+
+
 ## Useful Links
 
 If you wish to explore the Approov solution in more depth, then why not try one of the following links as a jumping off point:
 
-* [Approov Free Trial](https://approov.io/signup)(no credit card needed)
+* [Approov Free Trial](https://approov.io/signup) (no credit card needed)
 * [Approov QuickStarts](https://approov.io/docs/latest/approov-integration-examples/)
 * [Approov Live Demo](https://approov.io/product/demo)
 * [Approov Docs](https://approov.io/docs)
