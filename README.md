@@ -7,76 +7,86 @@ This repo implements the Approov API request verification for the [Azure API Man
 If you are looking for another Approov integration you can check our list of [quickstarts](https://approov.io/docs/latest/approov-integration-examples/backend-api/), and if you don't find what you are looking for, then please let us know [here](https://approov.io/contact).
 
 
-## TOC - Table of Contents
-
-* [Why?](#why)
-* [How it Works?](#how-it-works)
-* [Quickstart](#approov-integration-quickstart)
-* [Useful Links](#useful-links)
-
-
-## Why?
-
-You can learn more about Approov, the motives for adopting it, and more detail on how it works by following this [link](https://approov.io/product). In brief, Approov:
-
-* Ensures that accesses to your API come from official versions of your apps; it blocks accesses from republished, modified, or tampered versions
-* Protects the sensitive data behind your API; it prevents direct API abuse from bots or scripts scraping data and other malicious activity
-* Secures the communication channel between your app and your API with [Approov Dynamic Certificate Pinning](https://approov.io/docs/latest/approov-usage-documentation/#approov-dynamic-pinning). This has all the benefits of traditional pinning but without the drawbacks
-* Removes the need for an API key in the mobile app
-* Provides DoS protection against targeted attacks that aim to exhaust the API server resources to prevent real users from reaching the service or to at least degrade the user experience.
-
-[TOC](#toc---table-of-contents)
-
-
-## How it works?
-
-This is a brief overview of how the Approov cloud service and the Azure API management platform fit together from a backend perspective. For a complete overview of how the mobile app and backend fit together with the Approov cloud service and the Approov SDK we recommend to read the [Approov overview](https://approov.io/product) page on our website.
-
-### Approov Cloud Service
-
-The Approov cloud service attests that a device is running a legitimate and tamper-free version of your mobile app.
-
-* If the integrity check passes then a valid token is returned to the mobile app
-* If the integrity check fails then a legitimate looking token will be returned
-
-In either case, the app, unaware of the token's validity, adds it to every request it makes to the Approov protected API(s).
-
-### Azure API Management Platform
-
-The Azure API management platform ensures that the token supplied in the `Approov-Token` header is present and valid. The validation is done by using a shared secret known only to the Approov cloud service and the Azure API management platform.
-
-The request is handled such that:
-
-* If the Approov Token is valid, the request is allowed to reach the API endpoint
-* If the Approov Token is invalid, an HTTP 401 Unauthorized response is returned
-
-[TOC](#toc---table-of-contents)
-
-
 ## Approov Integration Quickstart
 
-The quickstart for the Approov integration with the Azure API management platform gets you up and running with basic Approov token checking:
+The quickstart assumes that you already have an Azure API management platform running, and that your are familiar with managing it.
 
-* [Approov token check quickstart](/docs/APPROOV_TOKEN_QUICKSTART.md)
+The quickstart was tested with the following Operating Systems:
 
-Bear in mind that the quickstart assumes that you already have an Azure API management platform running, and that your are familiar with managing it.
+* Ubuntu 20.04
+* MacOS Big Sur
+* Windows 10 WSL2 - Ubuntu 20.04
 
-If you need help to add Approov to the Azure API Management Platform then please contact us [here](https://approov.io/contact).
+If you find yourself lost or blocked in some part of the quickstart, then you can check the [detailed quickstart](docs/APPROOV_TOKEN_QUICKSTART.md).
+
+First, setup the [Appoov CLI](https://approov.io/docs/latest/approov-installation/index.html#initializing-the-approov-cli).
+
+First, register the API domain for which Approov will issues tokens:
+
+```bash
+approov api -add api.example.com
+```
+
+Next, enable your Approov `admin` role with:
+
+```bash
+eval `approov role admin`
+````
+
+Now, retrieve the Approov secret:
+
+```bash
+approov secret -get base64
+```
+
+Next, add the Approov secret, and it **MUST** be as a *named value* by following [their instructions](https://docs.microsoft.com/en-us/azure/api-management/api-management-howto-properties?tabs=azure-portal), and we recommend to use `approov-base64-secret` as its name. **Never** use it directly in the policy statement.
+
+The named value for the Approov secret **MUST** be created using the type `secret` to guarantee that is stored encrypted. You can also create it using the type `key vault`, that will retrieve it from the [Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/general/quick-create-portal), therefore you must have already created it there.
+
+> **IMPORTANT:** Never add the Approov Secret with the type `plain text` for the named value.
+
+Finally, add an inbound processing policy to the API you want to protect with Approov, by using the `validate-jwt` [policy](https://docs.microsoft.com/en-us/azure/api-management/api-management-access-restriction-policies#ValidateJWT) with this policy statement:
+
+```xml
+<policies>
+    <inbound>
+        <base />
+        <validate-jwt header-name="Approov-Token" failed-validation-httpcode="401" failed-validation-error-message="Unauthorized" require-expiration-time="true" require-signed-tokens="true">
+            <issuer-signing-keys>
+                <!-- Replace approov-base64-secret with whatever you have used to add the Approov Secret as a named value. -->
+                <key>{{approov-base64-secret}}</key>
+            </issuer-signing-keys>
+        </validate-jwt>
+    </inbound>
+</policies>
+```
+
+Not enough details in the bare bones quickstart? No worries, check the [detailed quickstart](docs/APPROOV_TOKEN_QUICKSTART.md) that contain a more comprehensive set of instructions, including how to test the Approov integration.
+
+
+## More Information
+
+* [Approov Overview](OVERVIEW.md)
+* [Detailed Quickstart](docs/APPROOV_TOKEN_QUICKSTART.md)
+* [Testing](docs/APPROOV_TOKEN_QUICKSTART.md#test-your-approov-integration)
+
+
+## Issues
+
+If you find any issue while following our instructions then just report it [here](https://github.com/approov/quickstart-azure-api-management/issues), with the steps to reproduce it, and we will sort it out and/or guide you to the correct path.
 
 
 ## Useful Links
 
 If you wish to explore the Approov solution in more depth, then why not try one of the following links as a jumping off point:
 
-* [Approov Free Trial](https://approov.io/signup) (no credit card needed)
+* [Approov Free Trial](https://approov.io/signup)(no credit card needed)
+* [Approov Get Started](https://approov.io/product/demo)
 * [Approov QuickStarts](https://approov.io/docs/latest/approov-integration-examples/)
-* [Approov Live Demo](https://approov.io/product/demo)
 * [Approov Docs](https://approov.io/docs)
-* [Approov Blog](https://blog.approov.io)
+* [Approov Blog](https://approov.io/blog/)
 * [Approov Resources](https://approov.io/resource/)
 * [Approov Customer Stories](https://approov.io/customer)
 * [Approov Support](https://approov.zendesk.com/hc/en-gb/requests/new)
 * [About Us](https://approov.io/company)
 * [Contact Us](https://approov.io/contact)
-
-[TOC](#toc---table-of-contents)

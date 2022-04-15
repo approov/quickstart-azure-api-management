@@ -48,7 +48,7 @@ Approov needs to know the domain name of the API for which it will issue tokens.
 
 Add it with:
 
-```text
+```bash
 approov api -add your.azure-api.domain.com
 ```
 
@@ -60,19 +60,24 @@ Adding the API domain also configures the [dynamic certificate pinning](https://
 
 Approov tokens are signed with a symmetric secret. To verify tokens, we need to grab the secret using the [Approov secret command](https://approov.io/docs/latest/approov-cli-tool-reference/#secret-command) and plug it into the Azure API management platform environment to check the signatures of the [Approov Tokens](https://www.approov.io/docs/latest/approov-usage-documentation/#approov-tokens) that it processes.
 
+
+To retrieved the Approov secret you need to enable your `admin` role with:
+
+```bash
+eval `approov role admin`
+````
+
 Retrieve the Approov secret with:
 
-```text
+```bash
 approov secret -get base64
 ```
-
-> **NOTE:** The `approov secret` command requires an [administration role](https://approov.io/docs/latest/approov-usage-documentation/#account-access-roles) to execute successfully.
 
 #### Set the Approov Secret
 
 The Approov secret **MUST** be a [named value](https://docs.microsoft.com/en-us/azure/api-management/api-management-howto-properties?tabs=azure-portal), and we recommend to use `approov-base64-secret` as its name. **Never** use it directly in the policy statement.
 
-The named value for the Approov secret **MUST** be created using the type `secret` to guarantee that is stored encrypted. You can also create it using the type `key vault`, that will retrieve it from the [Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/general/quick-create-portal), therefore you must already have created it there.
+The named value for the Approov secret **MUST** be created using the type `secret` to guarantee that is stored encrypted. You can also create it using the type `key vault`, that will retrieve it from the [Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/general/quick-create-portal), therefore you must have already created it there.
 
 > **IMPORTANT:** Never add the Approov Secret with the type `plain text` for the named value.
 
