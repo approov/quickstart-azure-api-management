@@ -21,7 +21,7 @@ If you find yourself lost or blocked in some part of the quickstart, then you ca
 
 First, setup the [Appoov CLI](https://approov.io/docs/latest/approov-installation/index.html#initializing-the-approov-cli).
 
-First, register the API domain for which Approov will issues tokens:
+Now, register the API domain for which Approov will issues tokens:
 
 ```bash
 approov api -add api.example.com
