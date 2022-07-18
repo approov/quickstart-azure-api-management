@@ -19,7 +19,7 @@ The quickstart was tested with the following Operating Systems:
 
 If you find yourself lost or blocked in some part of the quickstart, then you can check the [detailed quickstart](docs/APPROOV_TOKEN_QUICKSTART.md).
 
-First, setup the [Appoov CLI](https://approov.io/docs/latest/approov-installation/index.html#initializing-the-approov-cli).
+First, setup the [Approov CLI](https://approov.io/docs/latest/approov-installation/index.html#initializing-the-approov-cli).
 
 Now, register the API domain for which Approov will issues tokens:
 
